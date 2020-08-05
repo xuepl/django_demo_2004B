@@ -101,7 +101,7 @@ DATABASES = {
         'PORT': 3306,  # 数据库端口
         'USER': 'root',  # 数据库用户名
         'PASSWORD': 'root',  # 数据库用户密码
-        'NAME': 'gy_automations'  # 数据库名字
+        'NAME': 'gy_test_automations'  # 数据库名字
     }
 }
 

@@ -107,7 +107,6 @@ class API(BaseModel):
     )
     data_type_choice = (('formdata','formdata'),('raw','raw'))
     http_choice = (('HTTP', 'HTTP'), ('HTTPS', 'HTTPS'))
-    case = models.ForeignKey(TestCase, on_delete=models.CASCADE, verbose_name='用例', related_name="case_api")
     name = models.CharField(max_length=50, verbose_name='名称')
     dataType = models.CharField(max_length=50, verbose_name='数据类型',choices=data_type_choice)
     http = models.CharField(max_length=50, verbose_name='协议名称',choices=http_choice)
@@ -192,7 +191,6 @@ class APIResult(BaseModel):
     """
     执行结果
     """
-    api = models.ForeignKey(API, on_delete=models.CASCADE, verbose_name='接口', related_name="api_result")
     request_method = models.CharField(blank=True, null=True,max_length=50, verbose_name='请求方法')
     request_url = models.TextField(blank=True, null=True,verbose_name='请求地址')
     request_headers = models.TextField(blank=True, null=True,verbose_name='请求头')
@@ -200,18 +198,28 @@ class APIResult(BaseModel):
     status_code = models.CharField(blank=True, null=True,max_length=50, verbose_name='响应状态码')
     response_headers = models.TextField(blank=True, null=True,verbose_name='响应头')
     response_body = models.TextField(blank=True, null=True,verbose_name='响应正文')
-    assert_result = models.BooleanField(blank=True, null=True,verbose_name='断言结果')
 
     class Meta:
         db_table = "gy_tms_result"
 
 
 
-# class APIResultRelatetions(BaseModel):
-#     '''
-#     执行结果
-#     '''
-#     api = models.ForeignKey(API, on_delete=models.CASCADE, verbose_name='接口', related_name="api_api_result_relate")
-#     result = models.ForeignKey(APIResult, on_delete=models.CASCADE, verbose_name='执行结果', related_name="result_api_result_relate")
-#     assert_result = models.BooleanField(blank=True, null=True,verbose_name='断言结果')
+class APIResultRelatetions(BaseModel):
+    '''
+    执行结果
+    '''
+    api = models.ForeignKey(API, on_delete=models.CASCADE, verbose_name='接口', related_name="api_api_result_relate")
+    result = models.ForeignKey(APIResult, on_delete=models.CASCADE, verbose_name='执行结果', related_name="result_api_result_relate")
+    assert_result = models.BooleanField(blank=True, null=True,verbose_name='断言结果')
+    class Meta:
+        db_table = "gy_tms_api_result_relate"
 
+class AutomationCase(BaseModel):
+    class Meta:
+        db_table = "gy_tts_automation"
+
+class Task(BaseModel):
+
+    Automation=models.ForeignKey(API, on_delete=models.CASCADE, verbose_name='定时任务配置', related_name="automation_task")
+    class Meta:
+        db_table = "gy_tts_automation_task"

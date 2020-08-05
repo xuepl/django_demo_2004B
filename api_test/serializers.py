@@ -71,27 +71,14 @@ class APISerializer(serializers.ModelSerializer):
     """
     api_assert = APIAssertSerializer(many=True,read_only=True)
     api_relate = APIRelateSerializer(many=True,read_only=True)
-    result = serializers.SerializerMethodField(read_only=True)
     LastUpdateTime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
     createTime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
 
-    def get_result(self,obj):
-        sql = "SELECT * FROM `gy_tms_result` WHERE createTime > DATE_SUB(NOW(),INTERVAL 5 MINUTE) and api_id={};".format(obj.id)
-        result = models.APIAssert.objects.raw(sql)
-        if len(result) == 0:
-            return 2  # 未运行
-        res = result[len(result) - 1]
-        if res is None:
-            return 2 # 未运行
-        elif res.assert_result:
-            return 1 # 运行成功
-        else:
-            return 0 # 运行失败
 
 
     class Meta:
         model = models.API
-        fields = ('id', 'case_id', 'name','http','dataType','result',"method", "url", "headers", "params", "body", 'status','api_assert','api_relate', 'description',"LastUpdateTime","createTime")
+        fields = ('id', 'case_id', 'name','http','dataType',"method", "url", "headers", "params", "body", 'status','api_assert','api_relate', 'description',"LastUpdateTime","createTime")
 
 class TestCaseSerializer(serializers.ModelSerializer):
     """
@@ -153,4 +140,10 @@ class APIResultSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.APIResult
-        fields = ('id', 'api_id',"assert_list",'relate_list', 'request_method',"request_url", 'request_headers', 'request_body','status_code','response_headers','response_body','assert_result', 'description',"LastUpdateTime","createTime")
+        fields = ('id', 'api_id',"assert_list",'relate_list', 'request_method',"request_url", 'request_headers', 'request_body','status_code','response_headers','response_body', 'description',"LastUpdateTime","createTime")
+
+
+class APIResultRelatetionsSerializer(serializers.ModelSerializer):
+    LastUpdateTime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
+    createTime = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False, read_only=True)
+    fields = ('id', 'api_id', "result_id", 'assert_result', 'description', "LastUpdateTime", "createTime")

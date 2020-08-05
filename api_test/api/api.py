@@ -99,11 +99,12 @@ def save_request_result(api_id,response):
     data["status_code"] = r.status_code
     data["response_headers"] = json.dumps(dict(r.headers))
     data["response_body"] = r.text
-    data["assert_result"] = response_assert(api_id,data)
+    # data["assert_result"] = response_assert(api_id,data)
     response_relate(api_id,data)
     s = serializers.APIResultSerializer(data=data)
     s.is_valid(raise_exception=True)
-    s.save(api=api)
+    res = s.save()
+
 
 # 接口响应变量提取
 def response_relate(api_id, data):
